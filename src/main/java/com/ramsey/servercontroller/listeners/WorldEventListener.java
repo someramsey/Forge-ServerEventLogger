@@ -54,15 +54,10 @@ public class WorldEventListener {
 
     @SubscribeEvent
     public static void playerChatEvent(ServerChatEvent chatEvent) {
+        System.out.println(chatEvent.canChangeMessage());
         PlayerChatEvent playerChatEvent = new PlayerChatEvent();
 
-        Player player = chatEvent.getPlayer();
-
-        if(player.level.isClientSide()) {
-            return;
-        }
-
-        playerChatEvent.uuid = player.getStringUUID();
+        playerChatEvent.uuid = chatEvent.getPlayer().getStringUUID();
         playerChatEvent.message = chatEvent.getRawText();
 
         EventCollector.add(playerChatEvent);
