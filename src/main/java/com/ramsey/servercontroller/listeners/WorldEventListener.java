@@ -53,8 +53,7 @@ public class WorldEventListener {
     }
 
     @SubscribeEvent
-    public static void playerChatEvent(ServerChatEvent chatEvent) {
-        System.out.println(chatEvent.canChangeMessage());
+    public static void playerChatEvent(ServerChatEvent.Submitted chatEvent) {
         PlayerChatEvent playerChatEvent = new PlayerChatEvent();
 
         playerChatEvent.uuid = chatEvent.getPlayer().getStringUUID();
