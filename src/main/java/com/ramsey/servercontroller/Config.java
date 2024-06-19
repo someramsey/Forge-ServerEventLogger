@@ -14,13 +14,19 @@ public class Config
         .comment("Determines how many events are in a single batch")
         .defineInRange("eventClumpSize", 10, 0, Integer.MAX_VALUE);
 
+    private static final ForgeConfigSpec.ConfigValue<String> EVENT_STREAM_OUTPUT_PATH = BUILDER
+        .comment("The path to the file where the events will be written")
+        .define("eventStreamOutputPath", "events.json");
+
     static final ForgeConfigSpec SPEC = BUILDER.build();
 
     public static int eventClumpSize;
+    public static String eventStreamOutputPath;
 
     @SubscribeEvent
     public static void onLoad(final ModConfigEvent event)
     {
         eventClumpSize = EVENT_CLUMP_SIZE.get();
+        eventStreamOutputPath = EVENT_STREAM_OUTPUT_PATH.get();
     }
 }

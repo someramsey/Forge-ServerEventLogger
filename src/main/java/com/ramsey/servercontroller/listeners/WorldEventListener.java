@@ -20,7 +20,7 @@ public class WorldEventListener {
         Player player = playerEvent.getEntity();
 
         playerJoinEvent.uuid = player.getStringUUID();
-        playerJoinEvent.level = player.level.dimension().toString();
+        playerJoinEvent.level = player.level.dimension().location().toString();
         playerJoinEvent.position = player.position();
         playerJoinEvent.name = player.getName().getString();
 
@@ -47,7 +47,7 @@ public class WorldEventListener {
 
         playerChangeLevelEvent.uuid = player.getStringUUID();
         playerChangeLevelEvent.position = player.position();
-        playerChangeLevelEvent.level = playerEvent.getTo().toString();
+        playerChangeLevelEvent.level = playerEvent.getTo().location().toString();
 
         EventCollector.add(playerChangeLevelEvent);
     }
@@ -66,19 +66,31 @@ public class WorldEventListener {
     public static void playerDeathEvent(LivingDeathEvent deathEvent) {
         Entity entity = deathEvent.getEntity();
 
-        if(entity.level.isClientSide()) {
+        if (entity.level.isClientSide()) {
             return;
         }
 
-        if(entity instanceof Player player) {
+        if (entity instanceof Player player) {
             PlayerDeathEvent playerDeathEvent = new PlayerDeathEvent();
 
             playerDeathEvent.uuid = player.getStringUUID();
             playerDeathEvent.position = player.position();
-            playerDeathEvent.message = deathEvent.getSource().getLocalizedDeathMessage(player).toString();
-            playerDeathEvent.cause = deathEvent.getSource().toString();
+            playerDeathEvent.cause = deathEvent.getSource().msgId;
 
             EventCollector.add(playerDeathEvent);
         }
+    }
+
+    @SubscribeEvent
+    public static void playerSpawnEvent(PlayerEvent.PlayerRespawnEvent spawnEvent) {
+        PlayerSpawnEvent playerSpawnEvent = new PlayerSpawnEvent();
+
+        Player player = spawnEvent.getEntity();
+
+        playerSpawnEvent.position = player.position();
+        playerSpawnEvent.uuid = player.getStringUUID();
+        playerSpawnEvent.level = player.level.dimension().location().toString();
+
+        EventCollector.add(playerSpawnEvent);
     }
 }

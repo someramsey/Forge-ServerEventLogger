@@ -8,6 +8,10 @@ public abstract class Event implements Serializable {
     public String uuid;
     public long timestamp;
 
+    public Event() {
+        this.timestamp = System.currentTimeMillis();
+    }
+
     public String encode() {
         JsonObject jsonObject = new JsonObject();
 
@@ -25,11 +29,12 @@ public abstract class Event implements Serializable {
         PLAYER_JOIN,
         PLAYER_LEAVE,
         PLAYER_DEATH,
+        Player_SPAWN,
         PLAYER_CHAT,
         PLAYER_CHANGE_LEVEL,
         BLOCK_PLACE,
         BLOCK_BREAK,
-        CONTAINER_INTERACTION;
+        CONTAINER_INTERACTION
     }
 }
 
