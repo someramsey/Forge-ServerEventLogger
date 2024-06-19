@@ -2,6 +2,7 @@ package com.ramsey.servercontroller;
 
 import com.ramsey.servercontroller.events.Event;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.LinkedList;
@@ -20,12 +21,11 @@ public class EventCollector {
 
         if (events.size() > Config.eventClumpSize) {
             flush();
-            events.clear();
         }
     }
 
     private static void flush() {
-        if(flushing) {
+        if (flushing) {
             return;
         }
 
@@ -33,8 +33,8 @@ public class EventCollector {
 
         executor.execute(() -> {
             try {
-                for (Event event : events) {
-                    stream.write(event.toString());
+                while (!events.isEmpty()) {
+                    stream.write(events.poll().encode());
                     stream.write("\n");
                 }
 
@@ -49,7 +49,7 @@ public class EventCollector {
 
     public static void init() {
         try {
-            stream = new OutputStreamWriter(System.out);
+            stream = new FileWriter(Config.eventStreamOutputPath);
         } catch (Exception exception) {
             ServerControllerMain.LOGGER.error("Failed to initialize EventCollector", exception);
         }

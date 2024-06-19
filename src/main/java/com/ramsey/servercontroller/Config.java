@@ -16,17 +16,23 @@ public class Config
 
     private static final ForgeConfigSpec.ConfigValue<String> EVENT_STREAM_OUTPUT_PATH = BUILDER
         .comment("The path to the file where the events will be written")
-        .define("eventStreamOutputPath", "events.json");
+        .define("eventStreamOutputPath", "./events.json");
+
+    private static final ForgeConfigSpec.IntValue STREAM_TUNNEL_LISTN_PORT = BUILDER
+        .comment("The port on which the stream tunnel server will listen")
+        .defineInRange("streamTunnelListenPort", 25565, 0, 65535);
 
     static final ForgeConfigSpec SPEC = BUILDER.build();
 
     public static int eventClumpSize;
     public static String eventStreamOutputPath;
+    public static int streamTunnelListenPort;
 
     @SubscribeEvent
     public static void onLoad(final ModConfigEvent event)
     {
         eventClumpSize = EVENT_CLUMP_SIZE.get();
         eventStreamOutputPath = EVENT_STREAM_OUTPUT_PATH.get();
+        streamTunnelListenPort = STREAM_TUNNEL_LISTN_PORT.get();
     }
 }
