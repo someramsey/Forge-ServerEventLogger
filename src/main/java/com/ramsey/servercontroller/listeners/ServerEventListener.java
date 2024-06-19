@@ -16,19 +16,11 @@ public class ServerEventListener {
     @SubscribeEvent
     public static void serverStartEvent(ServerStartedEvent serverEvent) throws IOException {
         EventCollector.init();
-
-        new Thread(() -> {
-            try {
-                Thread.sleep(3000);
-                new StreamTunnelClient("127.0.0.1", Config.streamTunnelPort);
-            } catch (InterruptedException | IOException exception) {
-                throw new RuntimeException(exception);
-            }
-        }).start();
     }
 
     @SubscribeEvent
     public static void serverStopEvent(ServerStoppedEvent serverEvent) {
         EventCollector.close();
+        StreamTunnelServer.close();
     }
 }
