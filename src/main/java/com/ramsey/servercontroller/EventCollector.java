@@ -44,7 +44,7 @@ public class EventCollector {
     public static void init() {
         try {
             fileWriter = new FileWriter(Config.eventStreamOutputPath);
-            streamTunnelServer = new StreamTunnelServer(Config.streamTunnelPort);
+            streamTunnelServer = new StreamTunnelServer(Config.streamTunnelListenPort);
         } catch (Exception exception) {
             ServerControllerMain.LOGGER.error("Failed to initialize EventCollector", exception);
         }

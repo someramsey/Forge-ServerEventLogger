@@ -21,6 +21,5 @@ public class ServerEventListener {
     @SubscribeEvent
     public static void serverStopEvent(ServerStoppedEvent serverEvent) {
         EventCollector.close();
-        StreamTunnelServer.close();
     }
 }
