@@ -1,55 +1,50 @@
 package com.ramsey.servercontroller;
 
+import com.google.gson.Gson;
 import com.ramsey.servercontroller.events.Event;
+import com.ramsey.servercontroller.net.StreamTunnelServer;
 
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.LinkedList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class EventCollector {
-    private static final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private static final String[] events = new String[Config.eventClumpSize];
+    private static int size;
 
-    private static final LinkedList<Event> events = new LinkedList<>();
-    private static OutputStreamWriter stream;
-    private static boolean flushing;
+    private static final Gson gson = new Gson();
+    private static FileWriter fileWriter;
+    private static StreamTunnelServer streamTunnelServer;
 
     public static void add(Event event) {
-        events.add(event);
+        String eventData = gson.toJson(event.encode());
 
-        if (events.size() > Config.eventClumpSize) {
+        streamTunnelServer.write(eventData);
+
+        events[size++] = eventData;
+
+        if (size == Config.eventClumpSize - 1) {
             flush();
-            events.clear();
+            size = 0;
         }
     }
 
     private static void flush() {
-        if(flushing) {
-            return;
-        }
-
-        flushing = true;
-
-        executor.execute(() -> {
-            try {
-                for (Event event : events) {
-                    stream.write(event.toString());
-                    stream.write("\n");
-                }
-
-                stream.flush();
-            } catch (IOException exception) {
-                ServerControllerMain.LOGGER.error("Failed to flush events", exception);
+        try {
+            for (int i = 0; i < size; i++) {
+                fileWriter.write(events[i]);
+                fileWriter.write("\n");
             }
 
-            flushing = false;
-        });
+            fileWriter.flush();
+        } catch (IOException exception) {
+            ServerControllerMain.LOGGER.error("Failed to flush events", exception);
+        }
     }
 
     public static void init() {
         try {
-            stream = new OutputStreamWriter(System.out);
+            fileWriter = new FileWriter(Config.eventStreamOutputPath);
+            streamTunnelServer = new StreamTunnelServer(Config.streamTunnelPort);
         } catch (Exception exception) {
             ServerControllerMain.LOGGER.error("Failed to initialize EventCollector", exception);
         }
@@ -57,7 +52,8 @@ public class EventCollector {
 
     public static void close() {
         try {
-            stream.close();
+            fileWriter.close();
+            streamTunnelServer.close();
         } catch (Exception exception) {
             ServerControllerMain.LOGGER.error("Failed to close EventCollector", exception);
         }

@@ -1,5 +1,6 @@
 package com.ramsey.servercontroller.events;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import java.io.Serializable;
@@ -12,7 +13,7 @@ public abstract class Event implements Serializable {
         this.timestamp = System.currentTimeMillis();
     }
 
-    public String encode() {
+    public JsonObject encode() {
         JsonObject jsonObject = new JsonObject();
 
         jsonObject.addProperty("uuid", uuid);
@@ -20,7 +21,7 @@ public abstract class Event implements Serializable {
 
         encode(jsonObject);
 
-        return jsonObject.toString();
+        return jsonObject;
     }
 
     protected abstract void encode(JsonObject jsonObject);
