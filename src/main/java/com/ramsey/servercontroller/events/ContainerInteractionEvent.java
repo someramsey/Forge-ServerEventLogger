@@ -1,15 +1,16 @@
 package com.ramsey.servercontroller.events;
 
+import com.ramsey.servercontroller.listeners.ContainerEventListener;
 import net.minecraft.world.phys.Vec3;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.LinkedList;
 
 public class ContainerInteractionEvent extends Event {
-    public String containerBlock;
-    public Vec3 position;
-    SlotChanges[] changes;
-
+    public String uuid;
+    public Vec3 playerPosition;
+    public LinkedList<ContainerEventListener.ContainerInteraction.SlotChange> changes;
 
     @Override
     public EventType getType() {
@@ -20,28 +21,21 @@ public class ContainerInteractionEvent extends Event {
     public void write(ObjectOutputStream outputStream) throws IOException {
         super.write(outputStream);
 
-        outputStream.writeUTF(containerBlock);
-        outputStream.writeDouble(position.x);
-        outputStream.writeDouble(position.y);
-        outputStream.writeDouble(position.z);
-        outputStream.writeInt(changes.length);
+        outputStream.writeUTF(uuid);
+        outputStream.writeDouble(playerPosition.x);
+        outputStream.writeDouble(playerPosition.y);
+        outputStream.writeDouble(playerPosition.z);
 
         writeChanges(outputStream);
     }
 
     private void writeChanges(ObjectOutputStream outputStream) throws IOException {
-        outputStream.writeInt(changes.length);
+        outputStream.writeInt(changes.size());
 
-        for (SlotChanges change : changes) {
+        for (ContainerEventListener.ContainerInteraction.SlotChange change : changes) {
             outputStream.writeInt(change.slot);
             outputStream.writeUTF(change.item);
             outputStream.writeInt(change.count);
         }
-    }
-
-    public static class SlotChanges {
-        public String item;
-        int slot;
-        int count;
     }
 }

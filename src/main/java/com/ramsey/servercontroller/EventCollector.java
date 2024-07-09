@@ -20,6 +20,7 @@ public class EventCollector {
 
 
 
+
     public static void record(Event event) {
         merge(event);
 

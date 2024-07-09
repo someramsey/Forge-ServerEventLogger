@@ -1,6 +1,9 @@
 package com.ramsey.servercontroller.listeners;
 
+import com.ramsey.servercontroller.EventCollector;
 import com.ramsey.servercontroller.ServerControllerMain;
+import com.ramsey.servercontroller.Utils;
+import com.ramsey.servercontroller.events.ContainerInteractionEvent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerListener;
@@ -8,38 +11,50 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 
 @Mod.EventBusSubscriber(modid = ServerControllerMain.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ContainerEventListener {
-    private static final HashMap<AbstractContainerMenu, ContainerInteraction> listeners = new HashMap<>();
+    private static final HashMap<Player, ContainerInteraction> listeners = new HashMap<>();
 
     @SubscribeEvent
     public static void containerOpenEvent(PlayerContainerEvent.Open containerEvent) {
         AbstractContainerMenu container = containerEvent.getContainer();
-        ContainerInteraction listener = new ContainerInteraction(containerEvent.getEntity());
+        Player player = containerEvent.getEntity();
 
-        container.addSlotListener(listener);
-        listeners.put(container, listener);
+        if(!listeners.containsKey(player)) {
+            ContainerInteraction listener = new ContainerInteraction(player);
 
-        System.out.println(containerEvent);
-        System.out.println(containerEvent.getContainer());
+            container.addSlotListener(listener);
+            listeners.put(player, listener);
+        }
     }
 
     @SubscribeEvent
     public static void containerCloseEvent(PlayerContainerEvent.Close containerEvent) {
         AbstractContainerMenu container = containerEvent.getContainer();
-        ContainerInteraction listener = listeners.get(container);
+        Player player = containerEvent.getEntity();
 
-        container.removeSlotListener(listener);
+        if(listeners.containsKey(player)) {
+            ContainerInteraction listener = listeners.get(player);
 
-        System.out.println(containerEvent);
-        System.out.println(containerEvent.getContainer());
+            container.removeSlotListener(listener);
+            listeners.remove(player);
+
+            ContainerInteractionEvent event = new ContainerInteractionEvent();
+
+            event.uuid = player.getUUID().toString();
+            event.playerPosition = player.position();
+            event.changes = listener.slotChanges;
+
+            EventCollector.record(event);
+        }
     }
 
-    private static class ContainerInteraction implements ContainerListener {
+    public static class ContainerInteraction implements ContainerListener {
         public final Player player;
         public final LinkedList<SlotChange> slotChanges = new LinkedList<>();
 
@@ -48,22 +63,25 @@ public class ContainerEventListener {
         }
 
         @Override
-        public void slotChanged(AbstractContainerMenu abstractContainerMenu, int i, ItemStack itemStack) {
-            slotChanges.add(new SlotChange(abstractContainerMenu, i, itemStack));
+        public void slotChanged(@NotNull AbstractContainerMenu abstractContainerMenu, int slot, @NotNull ItemStack itemStack) {
+            String item = Utils.getItemId(itemStack.getItem());
+            int count = itemStack.getCount();
+
+            slotChanges.add(new SlotChange(item, slot, count));
         }
 
         @Override
-        public void dataChanged(AbstractContainerMenu abstractContainerMenu, int i, int i1) { }
+        public void dataChanged(@NotNull AbstractContainerMenu abstractContainerMenu, int i, int i1) { }
 
-        private static class SlotChange {
-            private final AbstractContainerMenu abstractContainerMenu;
-            private final int slot;
-            private final ItemStack item;
+        public static class SlotChange {
+            public final String item;
+            public final int slot;
+            public final int count;
 
-            private SlotChange(AbstractContainerMenu abstractContainerMenu, int slot, ItemStack item) {
-                this.abstractContainerMenu = abstractContainerMenu;
-                this.slot = slot;
+            public SlotChange(String item, int slot, int count) {
                 this.item = item;
+                this.slot = slot;
+                this.count = count;
             }
         }
     }

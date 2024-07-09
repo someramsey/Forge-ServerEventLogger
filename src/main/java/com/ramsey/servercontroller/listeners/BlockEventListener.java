@@ -2,10 +2,11 @@ package com.ramsey.servercontroller.listeners;
 
 import com.ramsey.servercontroller.EventCollector;
 import com.ramsey.servercontroller.ServerControllerMain;
-import com.ramsey.servercontroller.events.BlockBreakEvent;
-import com.ramsey.servercontroller.events.BlockPlaceEvent;
+import com.ramsey.servercontroller.Utils;
+import com.ramsey.servercontroller.events.BlockChangeEvent;
 import net.minecraft.core.Registry;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -14,24 +15,22 @@ import net.minecraftforge.fml.common.Mod;
 public class BlockEventListener {
     @SubscribeEvent
     public static void blockPlaceEvent(BlockEvent.EntityPlaceEvent blockEvent) {
-        BlockPlaceEvent blockPlaceEvent = new BlockPlaceEvent();
-
         Entity entity = blockEvent.getEntity();
 
-        if (entity == null) {
-            return;
+        if (entity instanceof Player) {
+            BlockChangeEvent blockPlaceEvent = new BlockChangeEvent(BlockChangeEvent.BlockEventType.BLOCK_PLACE);
+
+            blockPlaceEvent.uuid = entity.getStringUUID();
+            blockPlaceEvent.position = blockEvent.getPos();
+            blockPlaceEvent.block = Utils.getBlockId(blockEvent.getPlacedBlock().getBlock());
+
+            EventCollector.record(blockPlaceEvent);
         }
-
-        blockPlaceEvent.uuid = entity.getStringUUID();
-        blockPlaceEvent.position = blockEvent.getPos();
-        blockPlaceEvent.block = Registry.BLOCK.getKey(blockEvent.getPlacedBlock().getBlock()).toString();
-
-        EventCollector.record(blockPlaceEvent);
     }
 
     @SubscribeEvent
     public static void blockBreakEvent(BlockEvent.BreakEvent blockEvent) {
-        BlockBreakEvent blockBreakEvent = new BlockBreakEvent();
+        BlockChangeEvent blockBreakEvent = new BlockChangeEvent(BlockChangeEvent.BlockEventType.BLOCK_BREAK);
 
         blockBreakEvent.uuid = blockEvent.getPlayer().getStringUUID();
         blockBreakEvent.position = blockEvent.getPos();
