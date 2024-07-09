@@ -1,17 +1,25 @@
 package com.ramsey.servercontroller.events;
 
-import com.google.gson.JsonObject;
-import com.ramsey.servercontroller.Utils;
 import net.minecraft.core.BlockPos;
+
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 public class BlockPlaceEvent extends Event {
     public String block;
     public BlockPos position;
 
     @Override
-    protected void encode(JsonObject jsonObject) {
-        jsonObject.addProperty("type", EventType.BLOCK_PLACE.toString());
-        jsonObject.addProperty("block", block);
-        jsonObject.add("position", Utils.encodeBlockPos(position));
+    public EventType getType() {
+        return EventType.BLOCK_PLACE;
+    }
+
+    @Override
+    public void write(ObjectOutputStream outputStream) throws IOException {
+        super.write(outputStream);
+        outputStream.writeUTF(this.block);
+        outputStream.writeInt(this.position.getX());
+        outputStream.writeInt(this.position.getY());
+        outputStream.writeInt(this.position.getZ());
     }
 }

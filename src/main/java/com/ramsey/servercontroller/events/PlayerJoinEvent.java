@@ -1,8 +1,9 @@
 package com.ramsey.servercontroller.events;
 
-import com.google.gson.JsonObject;
-import com.ramsey.servercontroller.Utils;
 import net.minecraft.world.phys.Vec3;
+
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 public class PlayerJoinEvent extends Event {
     public String name;
@@ -10,10 +11,18 @@ public class PlayerJoinEvent extends Event {
     public Vec3 position;
 
     @Override
-    protected void encode(JsonObject jsonObject) {
-        jsonObject.addProperty("type", EventType.PLAYER_JOIN.toString());
-        jsonObject.addProperty("name", name);
-        jsonObject.addProperty("level", level);
-        jsonObject.add("position", Utils.encodeVec3(position));
+    public EventType getType() {
+        return EventType.PLAYER_JOIN;
+    }
+
+    @Override
+    public void write(ObjectOutputStream outputStream) throws IOException {
+        super.write(outputStream);
+
+        outputStream.writeUTF(name);
+        outputStream.writeUTF(level);
+        outputStream.writeDouble(position.x);
+        outputStream.writeDouble(position.y);
+        outputStream.writeDouble(position.z);
     }
 }

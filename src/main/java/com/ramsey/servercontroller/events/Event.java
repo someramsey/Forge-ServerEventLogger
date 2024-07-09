@@ -1,11 +1,9 @@
 package com.ramsey.servercontroller.events;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 
-import java.io.Serializable;
-
-public abstract class Event implements Serializable {
+public abstract class Event {
     public String uuid;
     public long timestamp;
 
@@ -13,18 +11,14 @@ public abstract class Event implements Serializable {
         this.timestamp = System.currentTimeMillis();
     }
 
-    public JsonObject encode() {
-        JsonObject jsonObject = new JsonObject();
+    public abstract EventType getType();
 
-        jsonObject.addProperty("uuid", uuid);
-        jsonObject.addProperty("timestamp", timestamp);
-
-        encode(jsonObject);
-
-        return jsonObject;
+    public void write(ObjectOutputStream outputStream) throws IOException {
+        outputStream.writeUTF(this.uuid);
+        outputStream.writeLong(this.timestamp);
+        outputStream.write(this.getType().ordinal());
     }
 
-    protected abstract void encode(JsonObject jsonObject);
 
     public enum EventType {
         PLAYER_JOIN,
@@ -38,5 +32,4 @@ public abstract class Event implements Serializable {
         CONTAINER_INTERACTION
     }
 }
-
 

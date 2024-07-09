@@ -1,50 +1,41 @@
 package com.ramsey.servercontroller;
 
-import com.google.gson.Gson;
 import com.ramsey.servercontroller.events.Event;
-import com.ramsey.servercontroller.net.StreamTunnelServer;
 
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 public class EventCollector {
-    private static final String[] events = new String[Config.eventClumpSize];
-    private static int size;
+    private static Event activeEvent;
+    private static FileOutputStream fileOutputStream;
 
-    private static final Gson gson = new Gson();
-    private static FileWriter fileWriter;
-    private static StreamTunnelServer streamTunnelServer;
-
-    public static void add(Event event) {
-        String eventData = gson.toJson(event.encode());
-
-        streamTunnelServer.write(eventData);
-
-        events[size++] = eventData;
-
-        if (size == Config.eventClumpSize - 1) {
-            flush();
-            size = 0;
+    private static void merge(Event event) {
+        if (activeEvent == null) {
+            activeEvent = event;
+            return;
         }
+
+        //TODO: compress events
+
     }
 
-    private static void flush() {
-        try {
-            for (int i = 0; i < size; i++) {
-                fileWriter.write(events[i]);
-                fileWriter.write("\n");
-            }
+    public static void record(Event event) {
+        merge(event);
 
-            fileWriter.flush();
+        try (
+            ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteOutputStream)
+        ) {
+            activeEvent.write(objectOutputStream);
+            fileOutputStream.write(byteOutputStream.toByteArray());
         } catch (IOException exception) {
-            ServerControllerMain.LOGGER.error("Failed to flush events", exception);
+            ServerControllerMain.LOGGER.error("Failed to write event to output stream", exception);
         }
     }
 
     public static void init() {
         try {
-            fileWriter = new FileWriter(Config.eventStreamOutputPath);
-            streamTunnelServer = new StreamTunnelServer(Config.streamTunnelListenPort);
+            fileOutputStream = new FileOutputStream(Config.eventStreamOutputPath, true);
+//            streamTunnelServer = new StreamTunnelServer(Config.streamTunnelListenPort);
         } catch (Exception exception) {
             ServerControllerMain.LOGGER.error("Failed to initialize EventCollector", exception);
         }
@@ -52,8 +43,8 @@ public class EventCollector {
 
     public static void close() {
         try {
-            fileWriter.close();
-            streamTunnelServer.close();
+            fileOutputStream.close();
+//            streamTunnelServer.close();
         } catch (Exception exception) {
             ServerControllerMain.LOGGER.error("Failed to close EventCollector", exception);
         }

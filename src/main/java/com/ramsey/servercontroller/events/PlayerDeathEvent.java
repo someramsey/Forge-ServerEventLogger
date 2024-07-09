@@ -1,17 +1,26 @@
 package com.ramsey.servercontroller.events;
 
-import com.google.gson.JsonObject;
-import com.ramsey.servercontroller.Utils;
 import net.minecraft.world.phys.Vec3;
+
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 public class PlayerDeathEvent extends Event {
     public String cause;
     public Vec3 position;
 
     @Override
-    protected void encode(JsonObject jsonObject) {
-        jsonObject.addProperty("type", EventType.PLAYER_DEATH.toString());
-        jsonObject.addProperty("cause", cause);
-        jsonObject.add("position", Utils.encodeVec3(position));
+    public EventType getType() {
+        return EventType.PLAYER_DEATH;
+    }
+
+    @Override
+    public void write(ObjectOutputStream outputStream) throws IOException {
+        super.write(outputStream);
+
+        outputStream.writeUTF(cause);
+        outputStream.writeDouble(position.x);
+        outputStream.writeDouble(position.y);
+        outputStream.writeDouble(position.z);
     }
 }

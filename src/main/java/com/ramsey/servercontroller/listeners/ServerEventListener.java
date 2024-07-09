@@ -1,9 +1,7 @@
 package com.ramsey.servercontroller.listeners;
 
-import com.ramsey.servercontroller.Config;
 import com.ramsey.servercontroller.EventCollector;
 import com.ramsey.servercontroller.ServerControllerMain;
-import com.ramsey.servercontroller.net.StreamTunnelClient;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

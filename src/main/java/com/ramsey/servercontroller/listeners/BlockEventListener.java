@@ -26,7 +26,7 @@ public class BlockEventListener {
         blockPlaceEvent.position = blockEvent.getPos();
         blockPlaceEvent.block = Registry.BLOCK.getKey(blockEvent.getPlacedBlock().getBlock()).toString();
 
-        EventCollector.add(blockPlaceEvent);
+        EventCollector.record(blockPlaceEvent);
     }
 
     @SubscribeEvent
@@ -37,6 +37,6 @@ public class BlockEventListener {
         blockBreakEvent.position = blockEvent.getPos();
         blockBreakEvent.block = Registry.BLOCK.getKey(blockEvent.getState().getBlock()).toString();
 
-        EventCollector.add(blockBreakEvent);
+        EventCollector.record(blockBreakEvent);
     }
 }

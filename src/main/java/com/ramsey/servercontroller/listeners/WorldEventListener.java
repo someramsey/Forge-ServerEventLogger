@@ -24,7 +24,7 @@ public class WorldEventListener {
         playerJoinEvent.position = player.position();
         playerJoinEvent.name = player.getName().getString();
 
-        EventCollector.add(playerJoinEvent);
+        EventCollector.record(playerJoinEvent);
     }
 
     @SubscribeEvent
@@ -36,7 +36,7 @@ public class WorldEventListener {
         playerLeaveEvent.uuid = player.getStringUUID();
         playerLeaveEvent.position = player.position();
 
-        EventCollector.add(playerLeaveEvent);
+        EventCollector.record(playerLeaveEvent);
     }
 
     @SubscribeEvent
@@ -49,7 +49,7 @@ public class WorldEventListener {
         playerChangeLevelEvent.position = player.position();
         playerChangeLevelEvent.level = playerEvent.getTo().location().toString();
 
-        EventCollector.add(playerChangeLevelEvent);
+        EventCollector.record(playerChangeLevelEvent);
     }
 
     @SubscribeEvent
@@ -59,7 +59,7 @@ public class WorldEventListener {
         playerChatEvent.uuid = chatEvent.getPlayer().getStringUUID();
         playerChatEvent.message = chatEvent.getRawText();
 
-        EventCollector.add(playerChatEvent);
+        EventCollector.record(playerChatEvent);
     }
 
     @SubscribeEvent
@@ -77,7 +77,7 @@ public class WorldEventListener {
             playerDeathEvent.position = player.position();
             playerDeathEvent.cause = deathEvent.getSource().msgId;
 
-            EventCollector.add(playerDeathEvent);
+            EventCollector.record(playerDeathEvent);
         }
     }
 
@@ -91,6 +91,6 @@ public class WorldEventListener {
         playerSpawnEvent.uuid = player.getStringUUID();
         playerSpawnEvent.level = player.level.dimension().location().toString();
 
-        EventCollector.add(playerSpawnEvent);
+        EventCollector.record(playerSpawnEvent);
     }
 }
