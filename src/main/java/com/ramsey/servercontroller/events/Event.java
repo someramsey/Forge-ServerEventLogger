@@ -27,8 +27,7 @@ public abstract class Event {
         Player_SPAWN,
         PLAYER_CHAT,
         PLAYER_CHANGE_LEVEL,
-        BLOCK_PLACE,
-        BLOCK_BREAK,
+        Block_Change,
         CONTAINER_INTERACTION
     }
 }
