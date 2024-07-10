@@ -22,6 +22,7 @@ public class BlockChangeEvent extends Event {
     @Override
     public void write(ObjectOutputStream outputStream) throws IOException {
         super.write(outputStream);
+
         outputStream.writeUTF(this.block);
         outputStream.writeInt(this.position.getX());
         outputStream.writeInt(this.position.getY());

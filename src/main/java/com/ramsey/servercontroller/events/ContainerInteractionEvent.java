@@ -8,7 +8,6 @@ import java.io.ObjectOutputStream;
 import java.util.LinkedList;
 
 public class ContainerInteractionEvent extends Event {
-    public String uuid;
     public Vec3 playerPosition;
     public LinkedList<ContainerEventListener.ContainerInteraction.SlotChange> changes;
 
@@ -21,7 +20,6 @@ public class ContainerInteractionEvent extends Event {
     public void write(ObjectOutputStream outputStream) throws IOException {
         super.write(outputStream);
 
-        outputStream.writeUTF(uuid);
         outputStream.writeDouble(playerPosition.x);
         outputStream.writeDouble(playerPosition.y);
         outputStream.writeDouble(playerPosition.z);

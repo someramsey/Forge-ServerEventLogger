@@ -38,9 +38,9 @@ public class ContainerEventListener {
         AbstractContainerMenu container = containerEvent.getContainer();
         Player player = containerEvent.getEntity();
 
-        if(listeners.containsKey(player)) {
-            ContainerInteraction listener = listeners.get(player);
+        ContainerInteraction listener = listeners.get(player);
 
+        if(listener != null) {
             container.removeSlotListener(listener);
             listeners.remove(player);
 
