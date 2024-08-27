@@ -18,4 +18,5 @@ The mod will log all events to a local file. The log file is encoded in binary f
 3. Start the server and the mod will generate a config file in the `config` folder.
 4. Edit the config file if you want to change the log file location.
 
-![image](https://github.com/user-attachments/assets/5d6a9fce-463c-45aa-ad98-3d25b6ee7cdf)
+![image](https://github.com/user-attachments/assets/1d2a1665-6f2e-4e07-a3f4-b6aaedb98946)
+
