@@ -17,3 +17,5 @@ The mod will log all events to a local file. The log file is encoded in binary f
 2. Place the downloaded jar file in the `mods` folder of your forge server.
 3. Start the server and the mod will generate a config file in the `config` folder.
 4. Edit the config file if you want to change the log file location.
+
+![image](https://github.com/user-attachments/assets/5d6a9fce-463c-45aa-ad98-3d25b6ee7cdf)
