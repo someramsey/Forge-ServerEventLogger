@@ -1,16 +1,19 @@
-# ServerEventLogger (Forge)
+# Server Event Logger (Forge)
 #### A server sided minecraft forge mod to record common player behaviour and events for moderation.
 
 #### Recorded Data
 - Player Join/Leave
 - Player Death/Spawn
 - Block Break/Place
-- Chat
+- Chat Messages
 - Dimension Change
+- Container interactions (Open, Close, Slot Change)
 
-The logged events are consequently written to a local file in JSON format. (The file will not be a valid JSON, the events are individually written to the file, not as an array).
+### Usage
+The mod will log all events to a local file. The log file is encoded in binary format, the jar file provides useful functions for reading and decoding the log file. Download the jar file, create a new java project and add the file as a dependency. Usee the `com.ramsey.Deserializer` class to access provided functions.
 
-### Config
-- `eventClumpSize` - Determines how many events are in a single batch. Default: 10
-- `eventStreamOutputPath` - The local path to the file where the events will be written. Default: "./events.json"
-- `streamTunnelListenPort` - The port the stream tunnel server will listen on. Default: 25565
+### Download and Installation
+1. Download the latest release from the [releases page](https://github.com/someramsey/Forge-ServerEventLogger/releases/)
+2. Place the downloaded jar file in the `mods` folder of your forge server.
+3. Start the server and the mod will generate a config file in the `config` folder.
+4. Edit the config file if you want to change the log file location.
