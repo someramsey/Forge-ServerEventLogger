@@ -11,14 +11,20 @@ public class Config {
 
     private static final ForgeConfigSpec.ConfigValue<String> OUTPUT_PATH = BUILDER
         .comment("The path to the file where the events will be written")
-        .define("eventStreamOutputPath", "./events.json");
+        .define("outputpath", "./logs/");
+
+    private static final ForgeConfigSpec.ConfigValue<String> OUTPUT_FILE = BUILDER
+        .comment("The name of the file where the events will be written")
+        .define("outputfile", "events.bin");
 
     static final ForgeConfigSpec SPEC = BUILDER.build();
 
-    public static String eventStreamOutputPath;
+    public static String outputPath;
+    public static String outputFile;
 
     @SubscribeEvent
     public static void onLoad(final ModConfigEvent event) {
-        eventStreamOutputPath = OUTPUT_PATH.get();
+        outputPath = OUTPUT_PATH.get();
+        outputFile = OUTPUT_FILE.get();
     }
 }

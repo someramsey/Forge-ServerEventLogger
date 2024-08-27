@@ -7,12 +7,10 @@ import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.io.IOException;
-
 @Mod.EventBusSubscriber(modid = ServerControllerMain.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ServerEventListener {
     @SubscribeEvent
-    public static void serverStartEvent(ServerStartedEvent serverEvent) throws IOException {
+    public static void serverStartEvent(ServerStartedEvent serverEvent) {
         EventCollector.init();
     }
 

@@ -44,6 +44,10 @@ public class ContainerEventListener {
             container.removeSlotListener(listener);
             listeners.remove(player);
 
+            if(listener.slotChanges.isEmpty()) {
+                return;
+            }
+
             ContainerInteractionEvent event = new ContainerInteractionEvent();
 
             event.uuid = player.getUUID().toString();
@@ -56,7 +60,7 @@ public class ContainerEventListener {
 
     public static class ContainerInteraction implements ContainerListener {
         public final Player player;
-        public final LinkedList<SlotChange> slotChanges = new LinkedList<>();
+        public final LinkedList<ContainerInteractionEvent.SlotChange> slotChanges = new LinkedList<>();
 
         private ContainerInteraction(Player player) {
             this.player = player;
@@ -67,22 +71,11 @@ public class ContainerEventListener {
             String item = Utils.getItemId(itemStack.getItem());
             int count = itemStack.getCount();
 
-            slotChanges.add(new SlotChange(item, slot, count));
+            slotChanges.add(new ContainerInteractionEvent.SlotChange(item, slot, count));
         }
 
         @Override
         public void dataChanged(@NotNull AbstractContainerMenu abstractContainerMenu, int i, int i1) { }
 
-        public static class SlotChange {
-            public final String item;
-            public final int slot;
-            public final int count;
-
-            public SlotChange(String item, int slot, int count) {
-                this.item = item;
-                this.slot = slot;
-                this.count = count;
-            }
-        }
     }
 }
